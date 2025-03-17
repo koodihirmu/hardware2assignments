@@ -3,17 +3,9 @@ from machine import UART, Pin, I2C, Timer, ADC
 from ssd1306 import SSD1306_I2C
 
 # Button class for debouncing etc
-class Button:
-    def __init__(self, pin, debounce_ms) -> None:
-        self.pin = Pin(pin, Pin.IN, Pin.PULL_UP)
-        self.debounce_ms = debounce_ms
-    
-    def pressed(self) -> bool:
-        if (not self.pin()):
-            time.sleep_ms(self.debounce_ms)
-            if (not self.pin()):
-                return True
-        return False
+# remember to upload Button.py file to pico
+from Button import Button
+
 
 sw0 = Button(9, 100)
 sw1 = Button(8, 100)
@@ -30,6 +22,13 @@ while True:
     text = input("$")
     string.append(text)
 
-    for i in string:
-        oled.text(string, 0,0,1)
+    oled.fill(0)
+
+    if len(string) < 8:
+        for row in range(0, len(string)):
+            oled.text(string[row], 0, row*8, 1)
+    else:
+        for row in range(0, 8):
+            oled.text(string[len(string) - (8 - row)], 0, row*8, 1)
+
     oled.show()
