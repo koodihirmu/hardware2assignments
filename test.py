@@ -25,9 +25,11 @@ while True:
     oled.fill(0)
 
     if len(string) < 8:
+        # go throught the whole list while it is under 8 items long
         for row in range(0, len(string)):
             oled.text(string[row], 0, row*8, 1)
     else:
+        # go through 8 items
         for row in range(0, 8):
             oled.text(string[len(string) - (8 - row)], 0, row*8, 1)
 
