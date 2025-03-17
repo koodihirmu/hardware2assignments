@@ -17,20 +17,19 @@ oled_height = 64
 oled = SSD1306_I2C(oled_width, oled_height, i2c)
 
 string = []
+pos_x, pos_y = (0, int(oled_height/2))
 
 while True:
-    text = input("$")
-    string.append(text)
 
-    oled.fill(0)
+    # check inputs
+    if (sw0.pressed()):
+        pos_y += 1
+    if (sw1.pressed()):
+        pos_x += 1
+    if (sw2.pressed()):
+        pos_y -= 1
 
-    if len(string) < 8:
-        # go throught the whole list while it is under 8 items long
-        for row in range(0, len(string)):
-            oled.text(string[row], 0, row*8, 1)
-    else:
-        # go through 8 items
-        for row in range(0, 8):
-            oled.text(string[len(string) - (8 - row)], 0, row*8, 1)
+    # use modulo for wrapping the lines
+    oled.pixel(pos_x % oled_width, pos_y % oled_height, 1)
 
     oled.show()
