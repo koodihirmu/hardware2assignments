@@ -24,9 +24,14 @@ while True:
     if (sw0.pressed()):
         pos_y += 1
     if (sw1.pressed()):
-        pos_x += 1
+        # reset the screen
+        oled.fill(0)
+        pos_x, pos_y = (0, int(oled_height/2))
     if (sw2.pressed()):
         pos_y -= 1
+
+    # move the pixel
+    pos_x += 1
 
     # use modulo for wrapping the lines
     oled.pixel(pos_x % oled_width, pos_y % oled_height, 1)
