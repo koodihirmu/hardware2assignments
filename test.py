@@ -16,7 +16,6 @@ oled_width = 128
 oled_height = 64
 oled = SSD1306_I2C(oled_width, oled_height, i2c)
 
-string = []
 pos_x, pos_y = (0, int(oled_height/2))
 
 while True:
