@@ -24,9 +24,12 @@ oled_width = 128
 oled_height = 64
 oled = SSD1306_I2C(oled_width, oled_height, i2c)
 
-pos_x = int(oled_width/2 - 15)
+ufo = "<=>"
+ufo_size = len(ufo)*8
+
+pos_x = int(oled_width/2 - ufo_size/2)
 pos_y = oled_height - 8
-oled.text("<=>", pos_x, pos_y, 1)
+oled.text(ufo, pos_x, pos_y, 1)
 speed = 5
 
 while True:
@@ -34,14 +37,14 @@ while True:
     # move to the right
     if (sw2.pressed()):
         oled.fill(0)
-        if pos_x < 128 - 30:
+        if pos_x < 123 - ufo_size:
             pos_x += speed
         oled.text("<=>", pos_x, pos_y, 1)
 
     # move to the left
     if (sw0.pressed()):
         oled.fill(0)
-        if pos_x > 0:
+        if pos_x > 5:
             pos_x -= speed
         oled.text("<=>", pos_x, pos_y, 1)
 
