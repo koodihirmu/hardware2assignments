@@ -22,22 +22,27 @@ pos_x, pos_y = (int(oled_width/2), int(oled_height/2))
 size = {"x": 25, "y": 25}
 
 pixelpos = [(0, 0)]
-count = 0
 
-speed = -2
+speed = -5
 is_filled = False
 
 while True:
-    time.sleep_ms(200)
-    oled.fill(0)
+    count = 0
+    if sw0.pressed():
+        flips = rd.randint(0, 10)
+        while count < flips:
+            time.sleep_ms(50)
+            oled.fill(0)
 
-    size["x"] += speed
+            size["x"] += speed
 
-    if (size["x"] <= 0 or size["x"] >= 25):
-        speed *= -1
-        if (size["x"] <= 0):
-            is_filled = not is_filled
+            if (size["x"] <= 0 or size["x"] >= 25):
+                speed *= -1
+                if (size["x"] <= 0):
+                    is_filled = not is_filled
+                if (size["x"] >= 25):
+                    count += 1
 
-    oled.ellipse(pos_x, pos_y, size["x"], size["y"], 1, is_filled)
-    # oled.fill(0)
-    oled.show()
+            oled.ellipse(pos_x, pos_y, size["x"], size["y"], 1, is_filled)
+            # oled.fill(0)
+            oled.show()
