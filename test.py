@@ -1,6 +1,7 @@
 import time
 from machine import UART, Pin, I2C, Timer, ADC
 from ssd1306 import SSD1306_I2C
+import random as rd
 
 # Button class for debouncing etc
 # remember to upload Button.py file to pico
@@ -16,24 +17,27 @@ oled_width = 128
 oled_height = 64
 oled = SSD1306_I2C(oled_width, oled_height, i2c)
 
-pos_x, pos_y = (0, int(oled_height/2))
+pos_x, pos_y = (int(oled_width/2), int(oled_height/2))
+
+size = {"x": 25, "y": 25}
+
+pixelpos = [(0, 0)]
+count = 0
+
+speed = -2
+is_filled = False
 
 while True:
+    time.sleep_ms(200)
+    oled.fill(0)
 
-    # check inputs
-    if (sw0.pressed()):
-        pos_y += 1
-    if (sw1.pressed()):
-        # reset the screen
-        oled.fill(0)
-        pos_x, pos_y = (0, int(oled_height/2))
-    if (sw2.pressed()):
-        pos_y -= 1
+    size["x"] += speed
 
-    # move the pixel
-    pos_x += 1
+    if (size["x"] <= 0 or size["x"] >= 25):
+        speed *= -1
+        if (size["x"] <= 0):
+            is_filled = not is_filled
 
-    # use modulo for wrapping the lines
-    oled.pixel(pos_x % oled_width, pos_y % oled_height, 1)
-
+    oled.ellipse(pos_x, pos_y, size["x"], size["y"], 1, is_filled)
+    # oled.fill(0)
     oled.show()
