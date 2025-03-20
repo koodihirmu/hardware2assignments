@@ -36,18 +36,20 @@ for samples in range(1, 10 * 250):
 
     max_scale = 32
     time_scale = 0.2
+    time_scale = 0.1
 
     # scale the value between 0 and 100 or whatever we want
     scaled_value = (value - min)/(max - min) * max_scale
 
     # show the pixels on the screen
     oled.pixel(int(samples * time_scale) % 128, pos_y +
+    oled.pixel(int(samples * time_scale) % (oled_width), pos_y +
                int(scaled_value - max_scale/2), 1)
 
     if not (samples % 50):
+    if ((samples * time_scale) % oled_width == 0) and samples != 0:
         oled.show()
 
-    if (samples * time_scale) % oled_width == 0:
         oled.fill(0)
 
     print(scaled_value)
