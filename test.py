@@ -16,37 +16,37 @@ pos_x, pos_y = (int(oled_width/2), int(oled_height/2))
 
 data = ff(10, name="capture_250Hz_01.txt")
 
-timestamp = 0
-point = 0
-tolerance = 0.05
-is_pos = True
-peaks = []
 
-for samples in range(1, 1000):
-    new_point = int(data.get())
-    new_timestamp = samples/250
+max = 0
+min = 50000
 
-    # calculate slope
-    slope = (new_point - point)/(new_timestamp - timestamp)
+# two seconds of data at 250/s
+for samples in range(1, 2 * 250):
+    value = data.get()
 
-    timestamp = new_timestamp
-    point = new_point
+    if value > max:
+        max = value
 
-    if is_pos and slope < 0:
-        peaks.append((point, timestamp, samples,))
-        is_pos = False
+    if value < min:
+        min = value
 
-    if not is_pos and slope > 0:
-        is_pos = True
+for samples in range(1, 10 * 250):
+    value = data.get()
 
-if len(peaks) > 0:
-    # calculate frequency t/peaks
-    signal_frequency = len(peaks) / (peaks[-1][1] - peaks[0][1])
-    # get the delta sample part of the tuple
-    number_of_samples = peaks[-1][2] - peaks[0][2]
-    # get the delta seconds part of the tuple
-    seconds = peaks[-1][1] - peaks[0][1]
+    max_scale = 32
+    time_scale = 0.2
 
-    print(f"Frequency of the signal: {signal_frequency} Hz")
-    print(f"Samples considered: {number_of_samples}")
-    print(f"Seconds: {seconds}")
+    # scale the value between 0 and 100 or whatever we want
+    scaled_value = (value - min)/(max - min) * max_scale
+
+    # show the pixels on the screen
+    oled.pixel(int(samples * time_scale) % 128, pos_y +
+               int(scaled_value - max_scale/2), 1)
+
+    if not (samples % 50):
+        oled.show()
+
+    if (samples * time_scale) % oled_width == 0:
+        oled.fill(0)
+
+    print(scaled_value)
