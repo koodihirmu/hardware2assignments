@@ -1,16 +1,11 @@
 import time
-from machine import UART, Pin, I2C, Timer, ADC
+from machine import Pin, I2C
 from ssd1306 import SSD1306_I2C
-import random as rd
+from filefifo import Filefifo as ff
 
 # Button class for debouncing etc
 # remember to upload Button.py file to pico
 from Button import Button
-
-
-sw0 = Button(9, 100)
-sw1 = Button(8, 100)
-sw2 = Button(7, 100)
 
 i2c = I2C(1, scl=Pin(15), sda=Pin(14), freq=400000)
 oled_width = 128
@@ -19,30 +14,39 @@ oled = SSD1306_I2C(oled_width, oled_height, i2c)
 
 pos_x, pos_y = (int(oled_width/2), int(oled_height/2))
 
-size = {"x": 25, "y": 25}
+data = ff(10, name="capture_250Hz_01.txt")
 
-pixelpos = [(0, 0)]
+timestamp = 0
+point = 0
+tolerance = 0.05
+is_pos = True
+peaks = []
 
-speed = -5
-is_filled = False
+for samples in range(1, 1000):
+    new_point = int(data.get())
+    new_timestamp = samples/250
 
-while True:
-    count = 0
-    if sw0.pressed():
-        flips = rd.randint(0, 10)
-        while count < flips:
-            time.sleep_ms(50)
-            oled.fill(0)
+    # calculate slope
+    slope = (new_point - point)/(new_timestamp - timestamp)
 
-            size["x"] += speed
+    timestamp = new_timestamp
+    point = new_point
 
-            if (size["x"] <= 0 or size["x"] >= 25):
-                speed *= -1
-                if (size["x"] <= 0):
-                    is_filled = not is_filled
-                if (size["x"] >= 25):
-                    count += 1
+    if is_pos and slope < 0:
+        peaks.append((point, timestamp, samples,))
+        is_pos = False
 
-            oled.ellipse(pos_x, pos_y, size["x"], size["y"], 1, is_filled)
-            # oled.fill(0)
-            oled.show()
+    if not is_pos and slope > 0:
+        is_pos = True
+
+if len(peaks) > 0:
+    # calculate frequency t/peaks
+    signal_frequency = len(peaks) / (peaks[-1][1] - peaks[0][1])
+    # get the delta sample part of the tuple
+    number_of_samples = peaks[-1][2] - peaks[0][2]
+    # get the delta seconds part of the tuple
+    seconds = peaks[-1][1] - peaks[0][1]
+
+    print(f"Frequency of the signal: {signal_frequency} Hz")
+    print(f"Samples considered: {number_of_samples}")
+    print(f"Seconds: {seconds}")
