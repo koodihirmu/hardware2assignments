@@ -30,6 +30,7 @@ for samples in range(1, 2 * 250):
     if value < min:
         min = value
 
+# 10 seconds of the data and draw it on pico
 for samples in range(1, 10 * 250):
     value = data.get()
 
