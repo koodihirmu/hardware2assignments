@@ -47,6 +47,7 @@ if len(peaks) > 0:
     # get the delta seconds part of the tuple
     seconds = peaks[-1][1] - peaks[0][1]
 
+    print(peaks)
     print(f"Frequency of the signal: {signal_frequency} Hz")
     print(f"Samples considered: {number_of_samples}")
     print(f"Seconds: {seconds}")
