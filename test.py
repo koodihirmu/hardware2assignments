@@ -14,8 +14,8 @@ oled = SSD1306_I2C(oled_width, oled_height, i2c)
 
 pos_x, pos_y = (int(oled_width/2), int(oled_height/2))
 
+# upload capture files to pico too
 data = ff(10, name="capture_250Hz_01.txt")
-
 
 max = 0
 min = 50000
