@@ -40,11 +40,14 @@ for samples in range(0, 10 * 250):
     # scale the value between 0 and 100 or whatever we want
     scaled_value = (value - min)/(max - min) * max_scale
 
+    # calculate x position with scaled dimensions
+    x_position = (samples*time_scale) % oled_width
+
     # show the pixels every time the screen if filled with the data
-    if ((samples * time_scale) % oled_width == 0) and samples != 0:
+    if (x_position == 0) and samples != 0:
         oled.show()
         oled.fill(0)
 
     # draw the pixels on the screen
-    oled.pixel(int(samples * time_scale) % (oled_width), pos_y +
+    oled.pixel(int(x_position), pos_y +
                int(scaled_value - max_scale/2), 1)
