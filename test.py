@@ -21,7 +21,7 @@ max = 0
 min = 50000
 
 # two seconds of data at 250/s
-for samples in range(1, 2 * 250):
+for samples in range(0, 2 * 250):
     value = data.get()
 
     if value > max:
