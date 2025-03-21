@@ -31,7 +31,7 @@ for samples in range(1, 2 * 250):
         min = value
 
 # 10 seconds of the data and draw it on pico
-for samples in range(1, 10 * 250):
+for samples in range(0, 10 * 250):
     value = data.get()
 
     max_scale = 32
@@ -40,15 +40,11 @@ for samples in range(1, 10 * 250):
     # scale the value between 0 and 100 or whatever we want
     scaled_value = (value - min)/(max - min) * max_scale
 
-    # don't draw the first (0) pixel because it shows up weird
-    if (int(samples*time_scale) % oled_width > 0):
-        # draw the pixels on the screen
-        oled.pixel(int(samples * time_scale) % (oled_width), pos_y +
-                   int(scaled_value - max_scale/2), 1)
-
     # show the pixels every time the screen if filled with the data
     if ((samples * time_scale) % oled_width == 0) and samples != 0:
         oled.show()
         oled.fill(0)
 
-    print(scaled_value)
+    # draw the pixels on the screen
+    oled.pixel(int(samples * time_scale) % (oled_width), pos_y +
+               int(scaled_value - max_scale/2), 1)
